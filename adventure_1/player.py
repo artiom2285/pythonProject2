@@ -19,6 +19,7 @@ class Player(pygame.sprite.Sprite):
         self.lives = 3
         self.timer = 0
         self.move = None
+        self.key = False
 
     def animation(self):
         self.go_left = []
@@ -52,14 +53,12 @@ class Player(pygame.sprite.Sprite):
                 if damage:
                     if self.rect.left < zombi.rect.left and self.rect.right < zombi.rect.right:
                         self.move = "left"
-                        print(self.rect.left, zombi.rect.left)
                     elif self.rect.right > zombi.rect.right and self.rect.right > zombi.rect.right:
                         self.move = "right"
-                        print(self.rect.left, zombi.rect.left)
             if self.move == "left":
-                self.rect.x -= 3
+                self.speed = -3
             elif self.move == "right":
-                self.rect.x += 3
+                self.speed = 3
         else:
             self.move = None
             key = pygame.key.get_pressed()

@@ -1,7 +1,7 @@
 import pygame
 from adventure_constants import *
 from player import Player
-from platform import Platform, Door
+from platform import Platform, Door, Key
 from camera import Camera
 from monsters import Zombies
 
@@ -16,8 +16,13 @@ def draw_level(level):
                 platforms_group.add(pf)
             elif item == "*":
                 door = Door(x * PLATFORM_WIDTH, y * PLATFORM_HEIGHT)
+                door_list.append(door)
                 entities.add(door)
                 door_group.add(door)
+            elif item == "+":
+                key = Key(x * PLATFORM_WIDTH, y * PLATFORM_HEIGHT)
+                entities.add(key)
+                key_group.add(key)
             elif item =="1":
                 zombie = Zombies(x * PLATFORM_WIDTH, y * PLATFORM_HEIGHT + 10)
                 entities.add(zombie)
@@ -40,6 +45,7 @@ bg = pygame.Surface((900, 640))
 bg.fill("#004400")
 platforms = []
 zombie_list = []
+door_list = []
 timer = pygame.time.Clock()
 player = Player(55, WIDTH -400)
 entities = pygame.sprite.Group()
@@ -52,6 +58,7 @@ players = pygame.sprite.Group()
 players.add(player)
 door_group = pygame.sprite.Group()
 zombie_group = pygame.sprite.Group()
+key_group = pygame.sprite.Group()
 current_level = LEVEL
 draw_level(level=LEVEL)
 while running:
@@ -64,22 +71,28 @@ while running:
     window.blit(bg, (0, 0))
     next_level = pygame.sprite.groupcollide(door_group, players, False, False)
     if next_level:
-        total_level_width = len(LEVEL_II[0]) * PLATFORM_WIDTH
-        total_level_height = len(LEVEL_II) * PLATFORM_HEIGHT
-        camera.new_level(total_level_width, total_level_height)
-        player.rect.center = (55, WIDTH -400)
-        platforms = []
-        for pf in platforms_group:
-            pf.kill()
-        for dr in door_group:
-            dr.kill()
-        for zomb in zombie_group:
-            zomb.kill()
-        draw_level(LEVEL_II)
+        if player.key == True:
+            total_level_width = len(LEVEL_II[0]) * PLATFORM_WIDTH
+            total_level_height = len(LEVEL_II) * PLATFORM_HEIGHT
+            camera.new_level(total_level_width, total_level_height)
+            player.rect.center = (55, WIDTH -400)
+            platforms = []
+            for pf in platforms_group:
+                pf.kill()
+            for dr in door_group:
+                dr.kill()
+            for zomb in zombie_group:
+                zomb.kill()
+            draw_level(LEVEL_II)
     damage = pygame.sprite.groupcollide(zombie_group, players, False, False)
     if damage:
         if player.get_damage():
             player.kill()
+    get_key = pygame.sprite.groupcollide(key_group, players, True, False)
+    if get_key:
+        player.key = True
+        for door in door_list:
+            door.set_image()
     entities.update(platforms, zombie_list)
     camera.update(player)
     for e in entities.sprites()[:: -1]:
