@@ -1,6 +1,7 @@
 import pygame
 import pyganim
 from adventure_constants import *
+import copy
 
 
 class Zombies(pygame.sprite.Sprite):
@@ -24,7 +25,9 @@ class Zombies(pygame.sprite.Sprite):
         self.anim_left.play()
         self.anim_right.play()
 
-    def update(self, platforms, *args):
+    def update(self, platforms: list, *args, **kwargs):
+        platforms = copy.copy(platforms)
+        platforms.extend(kwargs["pf_for_zomb"])
         self.rect.x += self.speed
         self.callide(platforms)
         if self.direction == "left":

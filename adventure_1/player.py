@@ -44,7 +44,7 @@ class Player(pygame.sprite.Sprite):
         self.fall_anim.play()
         self.stay_anim.blit(self.image, (0, 0))
 
-    def update(self, platforms, zombie_list):
+    def update(self, platforms, zombie_list, **kwargs):
         if self.timer > 0:
             key = None
             self.timer -= 1
@@ -128,4 +128,5 @@ class Player(pygame.sprite.Sprite):
             self.timer = 60
             self.lives -= 1
             if self.lives == 0:
-                return True
+                return 1
+            return 2
